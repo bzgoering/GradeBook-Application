@@ -3,7 +3,8 @@ class Grade:
     totalCorrect = 0
     #constructor
     #parm: correct questions and total questions
-    def __init__(self, correct, total):
+    def __init__(self, correct, total, name):
+         self.name = name
          self.correct = correct
          self.total = total
          Grade.totalCorrect = Grade.totalCorrect + correct
@@ -38,6 +39,7 @@ def printChoice():
     print("3. edit student's grade")
     print("4. delete student")
     print("5. delete student's grade")
+    print("6. show student's grade")
     return input("Enter your choice: ")
 
 def searchStudent(matrix, student):
@@ -54,10 +56,10 @@ gradeBook = []
 done = False
 
 # check if user entered a valid entry
-while not(done):
+while not done:
     userInput = printChoice()
 
-    if not (userInput == '0' or userInput == '1' or userInput == '2' or userInput == '3' or userInput == '4' or userInput == '5'):
+    if not (userInput == '0' or userInput == '1' or userInput == '2' or userInput == '3' or userInput == '4' or userInput == '5' or userInput == '6'):
         userInput = printChoice()
 
     #exit
@@ -79,6 +81,23 @@ while not(done):
             try:
                 correct = int(input("Enter number of correct questions: "))
                 total = int(input("Enter total number of questions: "))
-                gradeBook[studentIndex] = [Grade(correct, total)]
+                name = input("Enter a name for this grade: ")
+                gradeBook[studentIndex] = [Grade(correct, total, name)]
             except ValueError:
                 print("Error - Invalid Input")
+    #edit gradebook
+    elif userInput == '3':
+        print ("In progress...")
+
+    #delete student
+    elif userInput == '4':
+        print ("In progress...")
+
+    #delete gradebook
+    elif userInput == '5':
+        print ("In progress...")
+
+    #show grades
+    elif userInput == '6':
+        print ("In progress...")
+
