@@ -81,6 +81,18 @@ def searchGrade(matrix, gName, student):
             return index+1
     return -1
 
+def checkRepeatStudentNames(name, matrix):
+    for row in matrix:
+        if row[0] == name:
+            return True
+    return False
+
+def checkRepeatGradeNames(name, matrix):
+    for row in matrix:
+        for column in row[1:]:
+            if column.getName() == name:
+                return True
+    return False
 #toString
 def toString(matrix):
     for row in matrix:
@@ -104,7 +116,7 @@ gradeBook[1].append(Grade(90,100,"Spelling"))
 try:
     # check if user entered a valid entry
     while not done:
-        #gets urser choice
+        #gets user choice
         userInput = printChoice()
 
         #validates choice
@@ -118,7 +130,10 @@ try:
         #adds student
         elif userInput == '1':
             StudentName = input("Enter the student's name: ")
-            gradeBook.append([StudentName])
+            if not (checkRepeatStudentNames(StudentName, gradeBook)):
+                gradeBook.append([StudentName])
+            else:
+                print("Student's name already exists - please use a unique name")
 
         #adds student grade
         elif userInput == '2':
@@ -135,7 +150,11 @@ try:
                     correct = int(input("Enter number of correct questions: "))
                     total = int(input("Enter total number of questions: "))
                     name = input("Enter a name for this grade: ")
-                    gradeBook[studentIndex].append(Grade(correct, total, name))
+
+                    if not checkRepeatGradeNames(name, gradeBook):
+                        gradeBook[studentIndex].append(Grade(correct, total, name))
+                    else:
+                        print("Grade Name already exists - please use a unique name")
                 except ValueError:
                     print("Error - Invalid Input")
 
@@ -156,19 +175,27 @@ try:
                 #edit students name
                 if userEditInput == '1':
                     newName = input("Enter new name: ")
-                    gradeBook[studentIndex][0] = newName
+                    if not (checkRepeatStudentNames(newName, gradeBook)):
+                        gradeBook[studentIndex][0] = newName
+                    else:
+                        print("Student's name already exists - please use a unique name")
                 #edit grade name
                 elif userEditInput == '2':
                     #gets grade details
                     oldGradeName = input("Enter old name: ")
                     newGradeName = input("Enter new grade name: ")
-                    #searches for grade and validates
-                    grade = searchGrade(gradeBook, oldGradeName, studentIndex)
-                    #changes
-                    if grade > -1:
-                        gradeBook[studentIndex][grade].setName(newGradeName)
+                    
+                    if not checkRepeatGradeNames(newGradeName, gradeBook):
+                        # searches for grade and validates
+                        grade = searchGrade(gradeBook, oldGradeName, studentIndex)
+                        # changes
+                        if grade > -1:
+                            gradeBook[studentIndex][grade].setName(newGradeName)
+                        else:
+                            print("Grade Not Found")
                     else:
-                        print("Grade Not Found")
+                        print("Grade Name already exists - please use a unique name")
+
                 #edit grade score
                 elif userEditInput == '3':
                     gradeName = input("Enter grade name: ")
@@ -184,6 +211,7 @@ try:
                 print("Student Deleted")
             except ValueError:
                 print("Error - Student Not Found")
+
         #delete grade (this will only delete a single grade)
         elif userInput == '5':
             StudentName = input("Enter the student's name: ")
