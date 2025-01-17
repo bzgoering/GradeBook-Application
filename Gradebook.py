@@ -5,8 +5,8 @@ class Grade:
     #parm: correct questions and total questions
     def __init__(self, correct, total, name):
          self.name = name
-         self.correct = correct
-         self.total = total
+         self.correct = int(correct)
+         self.total = int (total)
          Grade.totalCorrect = Grade.totalCorrect + correct
          Grade.totalPoints = Grade.totalPoints + self.total
          self.percent = self.calcPercent()
@@ -31,22 +31,63 @@ class Grade:
     def calcPercent(self):
         return self.correct / self.total * 100
 
+    #getters and setters
+    def getName(self):
+        return self.name
+
+    def getCorrect(self):
+        return self.correct
+
+    def getTotal(self):
+        return self.total
+
+    def setName(self, name):
+        self.name = name
+        print("Grade name changed")
+
+    def setCorrect(self, correct):
+        self.correct = correct
+        print("correct questions changed")
+
+    def setTotal(self, total):
+        self.total = total
+        print("total questions changed")
+
 #User choices
 def printChoice():
     print("\n0. exit")
     print("1. add student")
     print("2. add student's grade")
-    print("3. edit student's grade")
+    print("3. edit student's record")
     print("4. delete student")
     print("5. delete student's grade")
     print("6. show student's grade")
     return input("Enter your choice: ")
 
+#searches for student in rows
 def searchStudent(matrix, student):
     for index, x in enumerate(matrix):
         if x[0] == student:
+            print("student found")
             return index
     return -1
+
+#searches column for grades
+def searchGrade(matrix, gName, student):
+    record = matrix[student]
+    for index, x in enumerate(record[1:]):
+        if x.getName() == gName:
+            print("grade found")
+            return index+1
+    return -1
+
+#toString
+def toString(matrix):
+    for row in matrix:
+        print("Student: " + row[0])
+        for column in row[1:]:
+            print(column.getName() + ": " + str(column.getCorrect()) + "/" + str(column.getTotal()))
+        print()
 
 #display
 print("Welcome to your Gradebook/nPlease select an option:")
@@ -54,11 +95,18 @@ print("Welcome to your Gradebook/nPlease select an option:")
 #variables
 gradeBook = []
 done = False
+gradeBook.append(["josh"])
+gradeBook[0].append(Grade(90,100,"Spelling"))
+
+gradeBook.append(["bill"])
+gradeBook[1].append(Grade(90,100,"Spelling"))
 
 # check if user entered a valid entry
 while not done:
+    #gets urser choice
     userInput = printChoice()
 
+    #validates choice
     if not (userInput == '0' or userInput == '1' or userInput == '2' or userInput == '3' or userInput == '4' or userInput == '5' or userInput == '6'):
         userInput = printChoice()
 
@@ -73,31 +121,74 @@ while not done:
 
     #adds student grade
     elif userInput == '2':
+        #gets student name
         studentName = input("Enter the student's name: ")
+        #search for student
         studentIndex = searchStudent(gradeBook, studentName)
+        #validates that student is in the record
         if len(gradeBook) == 0 or studentIndex == -1:
             print("Student Not Found")
         else:
+            #adds new grade and validate user inputs
             try:
                 correct = int(input("Enter number of correct questions: "))
                 total = int(input("Enter total number of questions: "))
                 name = input("Enter a name for this grade: ")
-                gradeBook[studentIndex] = [Grade(correct, total, name)]
+                gradeBook[studentIndex].append(Grade(correct, total, name))
             except ValueError:
                 print("Error - Invalid Input")
+
     #edit gradebook
     elif userInput == '3':
-        print ("In progress...")
+        #gets student name and validates
+        studentName = input("Enter the student's name: ")
+        studentIndex = searchStudent(gradeBook, studentName)
+        if len(gradeBook) == 0 or studentIndex == -1:
+            print("Student Not Found")
+        #gets edit request
+        else:
+            print("What are you editing")
+            print("1. student name")
+            print("2. grade name")
+            print("3. edit student's record")
+            userEditInput = input("Enter your choice: ")
+            #edit students name
+            if userEditInput == '1':
+                newName = input("Enter new name: ")
+                gradeBook[studentIndex][0] = newName
+            #edit grade name
+            elif userEditInput == '2':
+                #gets grade details
+                oldGradeName = input("Enter old name: ")
+                newGradeName = input("Enter new grade name: ")
+                #searches for grade and validates
+                grade = searchGrade(gradeBook, oldGradeName, studentIndex)
+                #changes
+                if grade > -1:
+                    gradeBook[studentIndex][grade].setName(newGradeName)
+                else:
+                    print("Grade Not Found")
+            #edit grade score
+            elif userEditInput == '3':
+                gradeName = input("Enter grade name: ")
+                grade = searchGrade(gradeBook, gradeName, studentIndex)
+                if grade > -1:
+                     newCorrect = input("Enter new correct grade: ")
+                     newTotal = input("Enter new total grade: ")
 
-    #delete student
+    #delete student (this will delete whole column)
     elif userInput == '4':
-        print ("In progress...")
-
-    #delete gradebook
+        try:
+            del gradeBook[searchStudent(gradeBook, input("Enter student's name: "))]
+            print("Student Deleted")
+        except ValueError:
+            print("Error - Student Not Found")
+    #delete grade (this will only delete a single grade)
     elif userInput == '5':
         print ("In progress...")
 
     #show grades
     elif userInput == '6':
-        print ("In progress...")
+        toString(gradeBook)
+
 
