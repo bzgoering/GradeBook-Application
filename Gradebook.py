@@ -82,8 +82,3 @@ while not(done):
                 gradeBook[studentIndex] = [Grade(correct, total)]
             except ValueError:
                 print("Error - Invalid Input")
-
-
-
-        # get correct questions
-        # get total
